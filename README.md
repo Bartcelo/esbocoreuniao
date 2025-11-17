@@ -1,16 +1,51 @@
-# esbocoreuniao
+# Projeto de Esboço para discursos e palestras
+[![NPM](https://img.shields.io/npm/l/react)](https://github.com/Bartcelo/EmprestimoLivros/blob/main/LICENSE) 
 
-A new Flutter project.
+- [Sobre o Projeto](#Sobre-o-Projeto).
+- [Layout do projeto telas de apresentação](#Layout-do-projeto-telas-de-apresentação).
+- [Tecnologias Utilizadas](#Tecnologias-Utilizadas).
+- [Como executar o projeto](#Como-executar-o-projeto).
+- [Implementações Futuras](#Implementações-Futuras).
+- [Autor](#Autor).
 
-## Getting Started
+  
+# Sobre o Projeto
+Este projeto é um aplicativo para gerenciamento e organização de palestras. Ele foi desenvolvido para palestrantes que participam de diversos eventos e necessitam de uma ferramenta para agrupar e controlar suas apresentações.
 
-This project is a starting point for a Flutter application.
+Funcionalidades Principais:
 
-A few resources to get you started if this is your first Flutter project:
+Banco de Dados Local: Utiliza o Sqflite para armazenar os dados das palestras de forma persistente e offline.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Listagem e Agrupamento: Permite cadastrar, visualizar e organizar as palestras em grupos personalizados.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Busca e Filtros: Inclui um sistema eficiente de busca no banco de dados e filtros para encontrar palestras específicas de forma rápida.
+
+Design Consistente: A interface do usuário segue uma paleta de cores bem definida, baseada no conceito de tríade de cores, garantindo uma experiência visual harmoniosa e agradável.
+
+Em resumo, o aplicativo funciona como uma agenda especializada, ajudando o usuário a manter o controle total sobre sua agenda de palestras. 
+
+## Layout do projeto telas de apresentação
+
+### Tela Inicial
+![TelaHome](https://github.com/Bartcelo/EmprestimoLivros/blob/main/assets/TelaHome.png)
+### Tela de cadastro dos livros
+![TelaCadastro](https://github.com/Bartcelo/EmprestimoLivros/blob/main/assets/TelaCadastrar.png)
+### Tela de Excluir Livro cadastrado
+![TelaExcluir](https://github.com/Bartcelo/EmprestimoLivros/blob/main/assets/TelaExcluir.png)
+
+## Tecnologias Utilizadas
+### Back end(#Sobre)
+- Sqflite
+- 
+### Front end
+- Dart
+- Flutter
+
+# Implementações Futuras
+1. Controle de valres
+2. organização do codigo arquitetura MVVM
+
+# Autor 
+Marcelo Gonzaga
+
+
