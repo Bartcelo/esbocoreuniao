@@ -1,0 +1,238 @@
+import 'package:esbocoreuniao/discurso_model.dart';
+import 'package:esbocoreuniao/discurso_repository.dart';
+import 'package:flutter/material.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final DiscursoRepository _repository = DiscursoRepository();
+  final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
+  final TextEditingController _searchController = TextEditingController();
+
+  List<Discurso> _discursos = [];
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    // todo: implement init_state
+    super.initState();
+    _carregarDiscursos();
+  }
+
+  Future<void> _carregarDiscursos() async {
+    setState(() => _carregando = true);
+
+    List<Discurso> discursos;
+
+    discursos = await _repository.getDiscursos();
+
+    setState(() {
+      _discursos = discursos;
+      _carregando = false;
+    });
+  }
+
+  Future<void> _carregarApenasPublicos(String categoria) async {
+    setState(() => _carregando = true);
+
+    final discursos = await _repository.getDiscursosPorCategorias([categoria]);
+
+    setState(() {
+      _discursos = discursos;
+      _carregando = false;
+    });
+  }
+
+  // ignore: unused_element
+  Future<void> _editarDiscurso(Discurso discurso) async {
+    discurso.titulo = '${discurso.titulo} [Editado]';
+    await _repository.updateDiscurso(discurso);
+    _carregarDiscursos();
+  }
+
+  Future<void> _excluirDiscurso(int id) async {
+    await _repository.deleteDiscurso(id);
+    _carregarDiscursos();
+  }
+
+  Future<void> _filtrarDiscursos(String query) async {
+    final discursos = await _repository.searchDiscursos(query);
+
+    setState(() {
+      _discursos = discursos;
+      _carregando = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text('Discursos (${_discursos.length})'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Container(
+                  color: Colors.red,
+                  width: 200,
+                  padding: EdgeInsets.only(right: 16),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Pesquisar...',
+                      hintStyle: TextStyle(color: Colors.black),
+                      border: InputBorder.none,
+                      prefixIcon: Icon(Icons.search, color: Colors.black),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(Icons.clear, size: 18),
+                              onPressed: () => _searchController.clear(),
+                            )
+                          : null,
+                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    onChanged: (query) {
+                      _filtrarDiscursos(query);
+                    },
+                  ),
+                ),
+                MenuAnchor(
+                  childFocusNode: _buttonFocusNode,
+                  menuChildren: <Widget>[
+                    MenuItemButton(
+                      onPressed: () {
+                        _carregarApenasPublicos('Publico');
+                      },
+                      child: const Text('Discurso Publico'),
+                    ),
+                    MenuItemButton(
+                      onPressed: () {
+                        _carregarApenasPublicos('Campo');
+                      },
+                      child: const Text('Consideração Campo'),
+                    ),
+                    MenuItemButton(
+                      onPressed: () {
+                        _carregarApenasPublicos('Outros');
+                      },
+                      child: const Text('Outros'),
+                    ),
+                    MenuItemButton(
+                      onPressed: () {
+                        _carregarDiscursos();
+                      },
+                      child: const Text('Atualizar'),
+                    ),
+                  ],
+                  builder: (_, MenuController controller, Widget? child) {
+                    return IconButton(
+                      focusNode: _buttonFocusNode,
+                      onPressed: () {
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                      },
+                      icon: const Icon(Icons.more_vert),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          // IconButton(icon: Icon(Icons.refresh), onPressed: _carregarDiscursos),
+        ],
+      ),
+      body: _carregando
+          ? Center(child: CircularProgressIndicator())
+          : _discursos.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.list, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text('Nenhum discurso encontrado'),
+                  SizedBox(height: 8),
+                  Text('Clique no + para adicionar um novo'),
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: _discursos.length,
+              itemBuilder: (context, index) {
+                final discurso = _discursos[index];
+                return Card(
+                  color: discurso.categoria == 'Publico'
+                      ? const Color(0xFF0a224b)
+                      : const Color(0xFF4a6da7),
+                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: ListTile(
+                    title: Text(
+                      discurso.titulo,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      discurso.descricao.length > 50
+                          ? '${discurso.descricao.substring(0, 50)}...'
+                          : discurso.descricao,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blueGrey),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/editardiscurso',
+                              arguments: discurso,
+                            ).then((resultado) {
+                              if (resultado == true) {
+                                _carregarDiscursos();
+                              }
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: const Color.fromARGB(255, 138, 42, 35),
+                          ),
+                          onPressed: () => _excluirDiscurso(discurso.id!),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/discursos',
+                        arguments: discurso,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =>
+            Navigator.pushNamed(context, '/criardiscurso').then((resultado) {
+              if (resultado == true) {
+                _carregarDiscursos();
+              }
+            }),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
