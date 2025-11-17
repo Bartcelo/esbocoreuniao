@@ -81,7 +81,14 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               children: [
                 Container(
-                  color: Colors.red,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 2,
+                      color: Color(0xFF0a224b),
+                      style: BorderStyle.solid,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   width: 200,
                   padding: EdgeInsets.only(right: 16),
                   child: TextField(
