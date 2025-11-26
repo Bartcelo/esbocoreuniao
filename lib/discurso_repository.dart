@@ -17,8 +17,8 @@ class DiscursoRepository {
 
     final List<Map<String, dynamic>> maps = await db.query(
       'discursos',
-      where: categoria != null ? 'categoria = ?' : null, // ✅ Filtro opcional
-      whereArgs: categoria != null ? [categoria] : null, // ✅ Args opcionais
+      where: categoria != null ? 'categoria = ?' : null,
+      whereArgs: categoria != null ? [categoria] : null, 
       orderBy: 'data_criacao DESC',
     );
 

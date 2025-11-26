@@ -12,7 +12,7 @@ class Editardiscurso extends StatefulWidget {
 class _EditardiscursoState extends State<Editardiscurso> {
   final TextEditingController _titulo = TextEditingController();
   final TextEditingController _discurso = TextEditingController();
-  bool _dadosCarregados = false; // ✅ Mude para var, não final
+  bool _dadosCarregados = false;
 
   final DiscursoRepository _repository = DiscursoRepository();
   Discurso? _discursoed;
@@ -28,9 +28,8 @@ class _EditardiscursoState extends State<Editardiscurso> {
         _titulo.text = discurso.titulo;
         _discurso.text = discurso.descricao;
         _discursoed = discurso;
-        _dadosCarregados = true; // ✅ Marca como carregado
+        _dadosCarregados = true;
       } else {
-        // ✅ CORREÇÃO: Atribuição correta
         _discursoed = Discurso(
           titulo: "titulo",
           descricao: "descricao",
@@ -62,11 +61,11 @@ class _EditardiscursoState extends State<Editardiscurso> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // ✅ Para a execução se tiver erro
+      return;
     }
 
     try {
-      await _updatadiscurso(); // ✅ Aguarda a atualização
+      await _updatadiscurso();
 
       if (!mounted) return;
 
@@ -77,7 +76,7 @@ class _EditardiscursoState extends State<Editardiscurso> {
         ),
       );
 
-      Navigator.pop(context, true); // ✅ Volta com sucesso
+      Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -92,6 +91,7 @@ class _EditardiscursoState extends State<Editardiscurso> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Editar Discurso"),
       ),
@@ -108,7 +108,7 @@ class _EditardiscursoState extends State<Editardiscurso> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  hintText: "Digite o Título", // ✅ Use hintText
+                  hintText: "Digite o Título",
                   filled: true,
                   fillColor: Colors.grey[200],
                 ),
@@ -138,8 +138,8 @@ class _EditardiscursoState extends State<Editardiscurso> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _salvarEdicao, // ✅ Chama a função corrigida
-        child: Icon(Icons.save), // ✅ Mude para "save"
+        onPressed: _salvarEdicao,
+        child: Icon(Icons.save),
       ),
     );
   }

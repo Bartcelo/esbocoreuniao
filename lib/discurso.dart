@@ -13,14 +13,14 @@ class Discursos extends StatefulWidget {
 class _DiscursosState extends State<Discursos> {
   final QuillController _controller = QuillController.basic();
   Timer? _timer;
-  int _tempoRestante = 0; // em segundos
+  int _tempoRestante = 0; 
   bool _timerRodando = false;
 
   final bool _dadosCarregados = false;
   final TextEditingController _discurso = TextEditingController();
 
   void tempodisc(int tempoInicial) {
-    // Cancela timer anterior se existir
+    
     _timer?.cancel();
 
     setState(() {
@@ -31,10 +31,10 @@ class _DiscursosState extends State<Discursos> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_tempoRestante > 0) {
-          _tempoRestante--; // Decrementa a variável de estado
+          _tempoRestante--; 
         } else {
           _timerRodando = false;
-          timer.cancel(); // Para o timer quando chegar a 0
+          timer.cancel(); 
         }
       });
     });
@@ -51,7 +51,7 @@ class _DiscursosState extends State<Discursos> {
     super.didChangeDependencies();
 
     if (!_dadosCarregados) {
-      // ✅ Agora o context está pronto
+      
       final arguments = ModalRoute.of(context)?.settings.arguments;
       if (arguments != null) {
         final discurso = arguments as Discurso;
@@ -62,17 +62,17 @@ class _DiscursosState extends State<Discursos> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // Importante: cancelar o timer
+    _timer?.cancel(); 
     _controller.dispose();
     super.dispose();
   }
 
   void _iniciarContador(int minutos) {
-    // Cancela timer anterior se existir
+    
     _timer?.cancel();
 
     setState(() {
-      _tempoRestante = minutos * 60; // Converte minutos para segundos
+      _tempoRestante = minutos * 60; 
       _timerRodando = true;
     });
 

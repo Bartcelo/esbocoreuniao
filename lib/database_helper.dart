@@ -30,7 +30,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Você pode criar mais tabelas aqui
+    
     await db.execute('''
       CREATE TABLE categorias(
         id INTEGER PRIMARY KEY AUTOINCREMENT,

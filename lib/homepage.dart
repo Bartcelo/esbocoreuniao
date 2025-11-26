@@ -69,6 +69,35 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _showMyAlertDialog(BuildContext context, int id) {
+    Widget cancelButton = TextButton(
+      child: Text("Não deletar"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Sim deletar"),
+      onPressed: () {
+        _excluirDiscurso(id);
+        Navigator.of(context).pop();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Delete"),
+      content: Text("Voce tem certeza que deseja Deletar?"),
+      actions: [cancelButton, continueButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,7 +185,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          // IconButton(icon: Icon(Icons.refresh), onPressed: _carregarDiscursos),
         ],
       ),
       body: _carregando
@@ -216,7 +244,9 @@ class _HomePageState extends State<HomePage> {
                             Icons.delete,
                             color: const Color.fromARGB(255, 138, 42, 35),
                           ),
-                          onPressed: () => _excluirDiscurso(discurso.id!),
+                          onPressed: () {
+                            _showMyAlertDialog(context, discurso.id!);
+                          },
                         ),
                       ],
                     ),

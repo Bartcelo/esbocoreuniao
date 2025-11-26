@@ -10,7 +10,7 @@ class Contadortimer extends StatefulWidget {
 
 class _ContadortimerState extends State<Contadortimer> {
   Timer? _timer;
-  int _tempoRestante = 0; // em segundos
+  int _tempoRestante = 0;
   bool _timerRodando = false;
 
   @override
@@ -20,11 +20,10 @@ class _ContadortimerState extends State<Contadortimer> {
   }
 
   void _iniciarContador(int minutos) {
-    // Cancela timer anterior se existir
     _timer?.cancel();
 
     setState(() {
-      _tempoRestante = minutos * 60; // Converte minutos para segundos
+      _tempoRestante = minutos * 60;
       _timerRodando = true;
     });
 
@@ -83,7 +82,6 @@ class _ContadortimerState extends State<Contadortimer> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Display do Tempo
             Container(
               width: 100,
               height: 100,
@@ -121,7 +119,6 @@ class _ContadortimerState extends State<Contadortimer> {
 
             SizedBox(height: 40),
 
-            // Botões de Controle
             if (_timerRodando) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
