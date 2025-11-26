@@ -4,7 +4,6 @@
 - [Sobre o Projeto](#Sobre-o-Projeto).
 - [Layout do projeto telas de apresentação](#Layout-do-projeto-telas-de-apresentação).
 - [Tecnologias Utilizadas](#Tecnologias-Utilizadas).
-- [Como executar o projeto](#Como-executar-o-projeto).
 - [Implementações Futuras](#Implementações-Futuras).
 - [Autor](#Autor).
 
@@ -27,25 +26,27 @@ Em resumo, o aplicativo funciona como uma agenda especializada, ajudando o usuá
 ## Layout do projeto telas de apresentação
 
 ### Tela Inicial
-![TelaHome](https://github.com/Bartcelo/EmprestimoLivros/blob/main/assets/TelaHome.png)
-### Tela de cadastro dos livros
-![TelaCadastro](https://github.com/Bartcelo/EmprestimoLivros/blob/main/assets/TelaCadastrar.png)
-### Tela de Excluir Livro cadastrado
-![TelaExcluir](https://github.com/Bartcelo/EmprestimoLivros/blob/main/assets/TelaExcluir.png)
+![TelaHome](https://github.com/Bartcelo/esbocoreuniao/blob/main/assets/telainicial.jpg)
+### Tela de cadastro das Palestras
+![TelaCadastro](https://github.com/Bartcelo/esbocoreuniao/blob/main/assets/telacriardiscurso.jpg)
+### Tela de Utilização do material da paletra
+![TelaExcluir](https://github.com/Bartcelo/esbocoreuniao/blob/main/assets/teladodiscurso.jpg)
 
 ## Tecnologias Utilizadas
 ### Back end(#Sobre)
 - Sqflite
-- 
+
+  
 ### Front end
 - Dart
 - Flutter
 
 # Implementações Futuras
-1. Controle de valres
-2. organização do codigo arquitetura MVVM
+1. Controle de valores
+2. Organização do codigo arquitetura MVVM
 
 # Autor 
 Marcelo Gonzaga
+
 
 
