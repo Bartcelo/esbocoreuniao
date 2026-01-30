@@ -208,8 +208,10 @@ class _HomePageState extends State<HomePage> {
                 final discurso = _discursos[index];
                 return Card(
                   color: discurso.categoria == 'Publico'
-                      ? const Color(0xFF0a224b)
-                      : const Color(0xFF4a6da7),
+                      ? const Color.fromARGB(255, 15, 54, 121)
+                      : discurso.categoria == 'Outros'
+                      ? const Color(0xFF4a6da7)
+                      : const Color(0xFF25532D),
                   margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: ListTile(
                     title: Text(
@@ -226,7 +228,14 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.edit, color: Colors.blueGrey),
+                          icon: Container(
+                            padding: EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: Icon(Icons.edit, color: Colors.blueGrey),
+                          ),
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
@@ -240,9 +249,16 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            color: const Color.fromARGB(255, 138, 42, 35),
+                          icon: Container(
+                            padding: EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: Icon(
+                              Icons.delete,
+                              color: const Color.fromARGB(255, 138, 42, 35),
+                            ),
                           ),
                           onPressed: () {
                             _showMyAlertDialog(context, discurso.id!);

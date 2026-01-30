@@ -17,6 +17,9 @@ class _EditardiscursoState extends State<Editardiscurso> {
   final DiscursoRepository _repository = DiscursoRepository();
   Discurso? _discursoed;
 
+  final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
+  String _categoria = 'Outros';
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -48,9 +51,16 @@ class _EditardiscursoState extends State<Editardiscurso> {
       titulo: _titulo.text,
       descricao: _discurso.text,
       dataCriacao: DateTime.now().toString(),
+      categoria: _categoria,
     );
 
     await _repository.updateDiscurso(discursoAtualizado);
+  }
+
+  void _atualizarCategoria(String novaCategoria) {
+    setState(() {
+      _categoria = novaCategoria;
+    });
   }
 
   Future<void> _salvarEdicao() async {
@@ -94,6 +104,48 @@ class _EditardiscursoState extends State<Editardiscurso> {
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Editar Discurso"),
+        actions: [
+          Text(_categoria),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MenuAnchor(
+              childFocusNode: _buttonFocusNode,
+              menuChildren: <Widget>[
+                MenuItemButton(
+                  onPressed: () {
+                    _atualizarCategoria('Publico');
+                  },
+                  child: const Text('Discurso Publico'),
+                ),
+                MenuItemButton(
+                  onPressed: () {
+                    _atualizarCategoria('Campo');
+                  },
+                  child: const Text('Consideração Campo'),
+                ),
+                MenuItemButton(
+                  onPressed: () {
+                    _atualizarCategoria('Outros');
+                  },
+                  child: const Text('Outros'),
+                ),
+              ],
+              builder: (_, MenuController controller, Widget? child) {
+                return IconButton(
+                  focusNode: _buttonFocusNode,
+                  onPressed: () {
+                    if (controller.isOpen) {
+                      controller.close();
+                    } else {
+                      controller.open();
+                    }
+                  },
+                  icon: const Icon(Icons.more_vert),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
