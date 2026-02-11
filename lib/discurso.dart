@@ -13,14 +13,13 @@ class Discursos extends StatefulWidget {
 class _DiscursosState extends State<Discursos> {
   final QuillController _controller = QuillController.basic();
   Timer? _timer;
-  int _tempoRestante = 0; 
+  int _tempoRestante = 0;
   bool _timerRodando = false;
 
   final bool _dadosCarregados = false;
   final TextEditingController _discurso = TextEditingController();
 
   void tempodisc(int tempoInicial) {
-    
     _timer?.cancel();
 
     setState(() {
@@ -31,10 +30,10 @@ class _DiscursosState extends State<Discursos> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_tempoRestante > 0) {
-          _tempoRestante--; 
+          _tempoRestante--;
         } else {
           _timerRodando = false;
-          timer.cancel(); 
+          timer.cancel();
         }
       });
     });
@@ -51,7 +50,6 @@ class _DiscursosState extends State<Discursos> {
     super.didChangeDependencies();
 
     if (!_dadosCarregados) {
-      
       final arguments = ModalRoute.of(context)?.settings.arguments;
       if (arguments != null) {
         final discurso = arguments as Discurso;
@@ -62,17 +60,16 @@ class _DiscursosState extends State<Discursos> {
 
   @override
   void dispose() {
-    _timer?.cancel(); 
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   void _iniciarContador(int minutos) {
-    
     _timer?.cancel();
 
     setState(() {
-      _tempoRestante = minutos * 60; 
+      _tempoRestante = minutos * 60;
       _timerRodando = true;
     });
 
@@ -110,6 +107,9 @@ class _DiscursosState extends State<Discursos> {
     int segundosRestantes = segundos % 60;
     return '${minutos.toString().padLeft(2, '0')}:${segundosRestantes.toString().padLeft(2, '0')}';
   }
+
+  double _fonteTextform = 20;
+  bool year2023 = true;
 
   void _pararContador() {
     _timer?.cancel();
@@ -199,6 +199,7 @@ class _DiscursosState extends State<Discursos> {
                   },
                 ),
               ),
+              SizedBox(width: 20),
             ],
           ),
         ],
@@ -210,18 +211,40 @@ class _DiscursosState extends State<Discursos> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: SingleChildScrollView(
-                  child: TextFormField(
-                    readOnly: true,
-                    controller: _discurso,
-                    maxLines: null,
-                    minLines: 3,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        //mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text('Fonte A - a'),
+                          Slider(
+                            value: _fonteTextform,
+                            max: 50,
+                            min: 20,
+                            onChanged: (double value) {
+                              setState(() {
+                                _fonteTextform = value;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      filled: true,
-                      fillColor: const Color.fromARGB(255, 219, 218, 218),
-                    ),
+                      TextFormField(
+                        style: TextStyle(fontSize: _fonteTextform),
+                        readOnly: true,
+                        controller: _discurso,
+                        maxLines: null,
+                        minLines: 3,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            // borderRadius: BorderRadius.circular(8),
+                          ),
+                          // filled: true,
+                          // fillColor: const Color.fromARGB(255, 219, 218, 218),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
