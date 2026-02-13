@@ -1,3 +1,4 @@
+import 'package:esbocoreuniao/componentes/sobre.dart';
 import 'package:esbocoreuniao/database_helper.dart';
 import 'package:esbocoreuniao/discurso_model.dart';
 import 'package:esbocoreuniao/discurso_repository.dart';
@@ -15,6 +16,8 @@ class _HomePageState extends State<HomePage> {
   final DiscursoRepository _repository = DiscursoRepository();
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final TextEditingController _searchController = TextEditingController();
+
+  final AppInfoService _appInfoService = AppInfoService();
 
   List<Discurso> _discursos = [];
   bool _carregando = true;
@@ -291,6 +294,17 @@ class _HomePageState extends State<HomePage> {
                         _carregarDiscursos();
                       },
                       child: const Text('Atualizar'),
+                    ),
+                    MenuItemButton(
+                      onPressed: () async {
+                        await _appInfoService.showInfoDialog(context);
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info),
+                          const Text(' Sobre'),
+                        ],
+                      ),
                     ),
                     MenuItemButton(
                       onPressed: () {
