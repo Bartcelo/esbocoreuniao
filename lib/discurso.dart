@@ -102,6 +102,10 @@ class _DiscursosState extends State<Discursos> {
     );
   }
 
+
+
+  
+
   String _formatarTempo(int segundos) {
     int minutos = segundos ~/ 60;
     int segundosRestantes = segundos % 60;

@@ -1,6 +1,10 @@
+import 'package:esbocoreuniao/database_helper.dart';
 import 'package:esbocoreuniao/discurso_model.dart';
 import 'package:esbocoreuniao/discurso_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +26,27 @@ class _HomePageState extends State<HomePage> {
     // todo: implement init_state
     super.initState();
     _carregarDiscursos();
+  }
+
+  Future<void> _requestStoragePermission() async {
+    if (Platform.isAndroid) {
+      // Agora Platform será reconhecido
+      if (Platform.version.startsWith('13') ||
+          Platform.version.startsWith('14') ||
+          Platform.version.startsWith('15')) {
+        // Android 13+ (API 33+)
+        final status = await Permission.photos.request();
+        if (!status.isGranted) {
+          throw Exception('Permissão de mídia negada');
+        }
+      } else {
+        // Android 12 e inferior
+        final status = await Permission.storage.request();
+        if (!status.isGranted) {
+          throw Exception('Permissão de armazenamento negada');
+        }
+      }
+    }
   }
 
   Future<void> _carregarDiscursos() async {
@@ -98,6 +123,127 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _fazerbackup() {
+    DatabaseHelper dbHelper = DatabaseHelper();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Backup'),
+        content: Text('Deseja Fazer ou Restaurar um backUp ?.'),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // BOTÃO ATUALIZAR (IMPORTAR)
+              TextButton(
+                onPressed: () async {
+                  try {
+                    // Abre o seletor de arquivos
+                    FilePickerResult? result = await FilePicker.platform
+                        .pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: ['json'],
+                          dialogTitle: 'Selecione o arquivo de backup',
+                        );
+
+                    if (result != null) {
+                      String filePath = result.files.single.path!;
+
+                      // Mostra informações do backup antes de importar
+                      String info = await dbHelper.getBackupInfo(filePath);
+
+                      // Dialog de confirmação
+                      bool? confirm = await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Confirmar Atualização'),
+                          content: Text(
+                            '$info\n\nIsso irá SUBSTITUIR todos os dados atuais?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text('Cancelar'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              style: ElevatedButton.styleFrom(),
+                              child: Text('Atualizar'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        // ✅ USA A FUNÇÃO importBackup
+                        await dbHelper.importBackup(filePath);
+                        await _carregarDiscursos();
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('✅ Dados atualizados com sucesso!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('❌ Erro ao atualizar: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                  Navigator.pop(context);
+                },
+                child: Text('Restaurar'),
+              ),
+
+              // BOTÃO CRIAR BACKUP (EXPORTAR)
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await dbHelper.shareBackup();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('✅ Backup criado e compartilhado!'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('❌ Erro: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Text('Fazer'),
+              ),
+
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancelar"),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,6 +312,17 @@ class _HomePageState extends State<HomePage> {
                         _carregarDiscursos();
                       },
                       child: const Text('Atualizar'),
+                    ),
+                    MenuItemButton(
+                      onPressed: () {
+                        _fazerbackup();
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.backup),
+                          const Text(' BackUp'),
+                        ],
+                      ),
                     ),
                   ],
                   builder: (_, MenuController controller, Widget? child) {
