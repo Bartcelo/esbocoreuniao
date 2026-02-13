@@ -2,8 +2,6 @@ import 'package:esbocoreuniao/database_helper.dart';
 import 'package:esbocoreuniao/discurso_model.dart';
 import 'package:esbocoreuniao/discurso_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,27 +24,6 @@ class _HomePageState extends State<HomePage> {
     // todo: implement init_state
     super.initState();
     _carregarDiscursos();
-  }
-
-  Future<void> _requestStoragePermission() async {
-    if (Platform.isAndroid) {
-      // Agora Platform será reconhecido
-      if (Platform.version.startsWith('13') ||
-          Platform.version.startsWith('14') ||
-          Platform.version.startsWith('15')) {
-        // Android 13+ (API 33+)
-        final status = await Permission.photos.request();
-        if (!status.isGranted) {
-          throw Exception('Permissão de mídia negada');
-        }
-      } else {
-        // Android 12 e inferior
-        final status = await Permission.storage.request();
-        if (!status.isGranted) {
-          throw Exception('Permissão de armazenamento negada');
-        }
-      }
-    }
   }
 
   Future<void> _carregarDiscursos() async {
@@ -137,6 +114,7 @@ class _HomePageState extends State<HomePage> {
               // BOTÃO ATUALIZAR (IMPORTAR)
               TextButton(
                 onPressed: () async {
+                  if (!mounted) return;
                   try {
                     // Abre o seletor de arquivos
                     FilePickerResult? result = await FilePicker.platform
@@ -151,7 +129,7 @@ class _HomePageState extends State<HomePage> {
 
                       // Mostra informações do backup antes de importar
                       String info = await dbHelper.getBackupInfo(filePath);
-
+                      if (!context.mounted) return;
                       // Dialog de confirmação
                       bool? confirm = await showDialog(
                         context: context,
@@ -199,6 +177,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                   }
+                  if (!context.mounted) return;
                   Navigator.pop(context);
                 },
                 child: Text('Restaurar'),
