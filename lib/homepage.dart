@@ -4,6 +4,7 @@ import 'package:esbocoreuniao/discurso_model.dart';
 import 'package:esbocoreuniao/discurso_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io' show Platform;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,7 +27,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // todo: implement init_state
     super.initState();
-    _carregarDiscursos();
+    validaplataforma();
+  }
+
+  void validaplataforma() {
+    if (Platform.isAndroid) {
+      _carregarDiscursos();
+    } else {}
   }
 
   Future<void> _carregarDiscursos() async {
@@ -132,9 +139,10 @@ class _HomePageState extends State<HomePage> {
 
                       // Mostra informações do backup antes de importar
                       String info = await dbHelper.getBackupInfo(filePath);
-                      if (!context.mounted) return;
+                      // if (!context.mounted) return;
                       // Dialog de confirmação
                       bool? confirm = await showDialog(
+                        // ignore: use_build_context_synchronously
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text('Confirmar Atualização'),
@@ -147,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                               child: Text('Cancelar'),
                             ),
                             ElevatedButton(
-                              onPressed: () => Navigator.pop(context, false),
+                              onPressed: () => Navigator.pop(context, true),
                               style: ElevatedButton.styleFrom(),
                               child: Text('Atualizar'),
                             ),
@@ -158,8 +166,8 @@ class _HomePageState extends State<HomePage> {
                       if (confirm == true) {
                         // ✅ USA A FUNÇÃO importBackup
                         await dbHelper.importBackup(filePath);
-                        await _carregarDiscursos();
-
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pop();
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -180,8 +188,8 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                   }
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
+
+                  await _carregarDiscursos();
                 },
                 child: Text('Restaurar'),
               ),
