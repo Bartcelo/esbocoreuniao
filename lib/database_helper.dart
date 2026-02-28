@@ -21,7 +21,9 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'meu_app.db');
+    Directory docsDir = await getApplicationSupportDirectory();
+    String path = join(docsDir.path, 'meu_app.db');
+
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
@@ -91,14 +93,18 @@ class DatabaseHelper {
     try {
       File backupFile = await createBackupFile();
 
-      // CORREÇÃO: Usando SharePlus com XFile
-      await Share.shareXFiles(
-        [XFile(backupFile.path)],
-        // text:
-        //     '📁 Backup do MeuApp - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-      );
+      if (Platform.isAndroid) {
+        //  ANDROID: compartilha via WhatsApp/Telegram (funciona)
+        await Share.shareXFiles([XFile(backupFile.path)]);
+      } else if (Platform.isWindows) {
+        //  WINDOWS: abre a pasta do arquivo
+        String folderPath = backupFile.parent.path;
+
+        // Abre a pasta no Explorer
+        await Process.start('explorer', [folderPath]);
+      }
     } catch (e) {
-      throw Exception('Erro ao compartilhar backup: $e');
+      throw Exception('Erro ao processar backup: $e');
     }
   }
 

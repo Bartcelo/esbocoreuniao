@@ -4,6 +4,7 @@ import 'package:esbocoreuniao/discurso_model.dart';
 import 'package:esbocoreuniao/discurso_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io' show Platform;
 
 class HomePage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   final AppInfoService _appInfoService = AppInfoService();
 
   List<Discurso> _discursos = [];
-  bool _carregando = true;
+  bool _carregando = false;
 
   @override
   void initState() {
@@ -33,7 +34,11 @@ class _HomePageState extends State<HomePage> {
   void validaplataforma() {
     if (Platform.isAndroid) {
       _carregarDiscursos();
-    } else {}
+    } else if (Platform.isWindows) {
+      sqfliteFfiInit(); // Inicializa o FFI
+      databaseFactory = databaseFactoryFfi;
+      _carregarDiscursos();
+    }
   }
 
   Future<void> _carregarDiscursos() async {
